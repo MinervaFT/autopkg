@@ -1,18 +1,18 @@
 # MinervaFT AutoPkg Recipes
 
-Community AutoPkg recipes maintained by MinervaFT.
+Community-maintained AutoPkg recipes for macOS application packaging, deployment, and software lifecycle management.
 
-This repository contains AutoPkg recipes for macOS software packaging, deployment, and update automation.
+This repository contains AutoPkg recipes maintained by MinervaFT and is intended for use with AutoPkg, AutoPkgr, Munki, Jamf Pro, Kandji, Mosyle, and other Mac management platforms.
 
 ## Requirements
 
 - AutoPkg 2.3 or later
 - macOS
-- Internet access to vendor download sources
+- Internet access to software vendor download sources
 
-## Adding this Repository
+## Repository Installation
 
-Add the repository to AutoPkg:
+Add this repository:
 
 ```bash
 autopkg repo-add https://github.com/MinervaFT/recipes.git
@@ -24,46 +24,74 @@ Update all repositories:
 autopkg repo-update all
 ```
 
-Search available recipes:
+List repositories:
 
 ```bash
-autopkg search ableton
-autopkg search chrome
+autopkg repo-list
 ```
 
-List all recipes from this repository:
+List recipes in this repository:
 
 ```bash
 autopkg repo-list-recipes MinervaFT-recipes
 ```
 
+Search available recipes:
+
+```bash
+autopkg search ableton
+autopkg search chrome
+autopkg search packet
+```
+
+## Optional Dependencies
+
+Some recipes use processors from other AutoPkg repositories.
+
+### HomeBySix Recipes
+
+Required for recipes that utilise:
+
+- VersionSplitter
+- Additional packaging processors
+
+Install:
+
+```bash
+autopkg repo-add https://github.com/homebysix/recipes.git
+```
+
+### Recommended Community Repositories
+
+```bash
+autopkg repo-add https://github.com/autopkg/recipes.git
+autopkg repo-add https://github.com/homebysix/recipes.git
+```
+
 ## Available Recipes
 
-| Application | Download | Package | Munki | Notes |
-|------------|----------|----------|--------|--------|
-| Ableton Live | ✅ | ⬜ | ⬜ | Supports Live 11 and 12 |
+| Application | Download | PKG | Munki | Notes |
+|------------|----------|-----|--------|---------|
+| Ableton Live | ✅ | ✅ | ⬜ | Includes Sassafras licensing package variant |
 | Google Chrome | ✅ | ✅ | ✅ | Enterprise browser deployment |
-| Cisco Packet Tracer | ✅ | ✅ | ✅ | Networking labs |
-| Camtasia | ✅ | ✅ | ✅ | Screen recording and editing |
 
-## Example Usage
+| *Additional recipes added regularly* | | | |
 
-### Download Ableton Live
+## Naming Conventions
 
-```bash
-autopkg run AbletonLive.download.recipe
+Recipe identifiers follow the standard format:
+
+```text
+com.github.MinervaFT.Application.download
+com.github.MinervaFT.Application.pkg
+com.github.MinervaFT.Application.munki
 ```
 
-### Override Recipe
+Examples:
 
-```bash
-autopkg make-override AbletonLive.download.recipe
-```
-
-### Run Override
-
-```bash
-autopkg run AbletonLive.download.recipe.yaml
+```text
+com.github.MinervaFT.AbletonLive12.download
+com.github.MinervaFT.AbletonLiveSassafras.pkg
 ```
 
 ## Repository Structure
@@ -72,42 +100,112 @@ autopkg run AbletonLive.download.recipe.yaml
 recipes/
 ├── AbletonLive/
 │   ├── AbletonLive.download.recipe
-│   ├── AbletonLive.pkg.recipe
-│   └── AbletonLive.munki.recipe
+│   └── AbletonLiveSassafras.pkg.recipe
+│
+├── CiscoPacketTracer/
+│   ├── CiscoPacketTracer.download.recipe
+│   ├── CiscoPacketTracer.pkg.recipe
+│   └── CiscoPacketTracer.munki.recipe
+│
 ├── GoogleChrome/
 │   ├── GoogleChrome.download.recipe
 │   ├── GoogleChrome.pkg.recipe
 │   └── GoogleChrome.munki.recipe
-└── Placeholder/
-    ├── Placeholder.download.recipe
-    ├── Placeholder.pkg.recipe
-    
+
 ```
 
-## Naming Convention
+## Example Usage
 
-Recipes use the following identifier convention:
+### Download Latest Ableton Live
 
-```text
-com.github.MinervaFT.Application.download
-com.github.MinervaFT.Application.pkg
+```bash
+autopkg run AbletonLive.download.recipe
 ```
 
-Example:
+### Build Installer Package
 
-```text
-com.github.MinervaFT.AbletonLive.download
+```bash
+autopkg run AbletonLive.pkg.recipe
 ```
 
-## Reporting Issues
+### Build Sassafras Package
 
-If a recipe no longer downloads correctly due to vendor website changes, please open a GitHub issue with:
+```bash
+autopkg run AbletonLiveSassafras.pkg.recipe
+```
 
-- Recipe name
-- AutoPkg version
-- Error output
-- Vendor download URL (if known)
+### Create an Override
+
+```bash
+autopkg make-override AbletonLive.download.recipe
+```
+
+### Verify Recipe Processing
+
+```bash
+autopkg run -vv AbletonLive.download.recipe
+```
+
+## Contributing
+
+Pull requests are welcome.
+
+When contributing:
+
+- Follow standard AutoPkg naming conventions
+- Use reverse-DNS identifiers
+- Use stable vendor download sources whenever possible
+- Include code-signature verification where supported
+- Keep processor dependencies documented
+- Test recipes before submitting
+
+## Troubleshooting
+
+### Recipe Not Found
+
+Refresh repositories:
+
+```bash
+autopkg repo-update all
+```
+
+Verify:
+
+```bash
+autopkg repo-list-recipes MinervaFT-recipes
+```
+
+### Processor Not Found
+
+Install required dependency repositories:
+
+```bash
+autopkg repo-add https://github.com/homebysix/recipes.git
+autopkg repo-update all
+```
+
+### Search Returns No Results
+
+Verify repository registration:
+
+```bash
+autopkg repo-list
+```
+
+and:
+
+```bash
+autopkg repo-list-recipes MinervaFT-recipes
+```
 
 ## Disclaimer
 
-These recipes are provided as-is and have been developed for macOS software deployment workflows. Always validate packages and signatures within your own environment before production deployment.
+These recipes are provided as-is and are intended for use by macOS administrators. Always validate packages, code signatures, and deployment behaviour within your own environment before production use.
+
+## Maintainer
+
+MinervaFT
+
+GitHub Repository:
+
+https://github.com/MinervaFT/recipes
