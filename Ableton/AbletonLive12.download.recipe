@@ -19,7 +19,7 @@ Based off work of Jazzace
 		<key>ARCHITECTURE</key>
 		<string>universal</string>
 		<key>EDITION</key>
-		<string>lite</string>
+		<string>suite</string>
 		<key>LIVE_VERS</key>
 		<string>12</string>
 		<key>NAME</key>
