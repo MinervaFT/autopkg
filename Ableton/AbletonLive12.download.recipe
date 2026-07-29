@@ -2,111 +2,70 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-    <key>Description</key>
-    <string>
-Downloads the latest available version of Ableton Live.
-
-Supported options:
-
-LIVE_VERS:
-- 12
-- 11
-
-EDITION:
-- suite
-- standard
-- intro
-- lite
-- trial
-
-ARCHITECTURE:
-- universal
-- intel
-
-The recipe dynamically retrieves the latest release version from the Ableton release notes site and downloads the corresponding installer disk image.
-    </string>
-
-    <key>Identifier</key>
-    <string>com.github.MinervaFT.AbletonLive.download</string>
-
-    <key>MinimumVersion</key>
-    <string>2.3</string>
-
-    <key>Input</key>
-    <dict>
-
-        <key>NAME</key>
-        <string>AbletonLive</string>
-
-        <key>LIVE_VERS</key>
-        <string>12</string>
-
-        <key>EDITION</key>
-        <string>suite</string>
-
-        <key>ARCHITECTURE</key>
-        <string>universal</string>
-
-    </dict>
-
-    <key>Process</key>
-    <array>
-
-        <dict>
-            <key>Processor</key>
-            <string>URLTextSearcher</string>
-
-            <key>Arguments</key>
-            <dict>
-
-                <key>url</key>
-                <string>https://www.ableton.com/en/release-notes/live-%LIVE_VERS%/</string>
-
-                <key>re_pattern</key>
-                <string>h2[^1-9]*(%LIVE_VERS%(\.\d+)+)</string>
-
-                <key>result_output_var_name</key>
-                <string>long_version</string>
-
-            </dict>
-        </dict>
-
-        <dict>
-            <key>Processor</key>
-            <string>URLDownloader</string>
-
-            <key>Arguments</key>
-            <dict>
-
-                <key>url</key>
-                <string>https://cdn-downloads.ableton.com/channels/%long_version%/ableton_live_%EDITION%_%long_version%_%ARCHITECTURE%.dmg</string>
-
-            </dict>
-        </dict>
-
-        <dict>
-            <key>Processor</key>
-            <string>EndOfCheckPhase</string>
-        </dict>
-
-        <dict>
-            <key>Processor</key>
-            <string>CodeSignatureVerifier</string>
-
-            <key>Arguments</key>
-            <dict>
-
-                <key>input_path</key>
-                <string>%pathname%/*.app</string>
-
-                <key>requirement</key>
-                <string>identifier "com.ableton.live" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13] and certificate leaf[subject.OU] = MWR434WD94</string>
-
-            </dict>
-        </dict>
-
-    </array>
-
+	<key>Comment</key>
+	<string>Based on a recipe by Jazzace for Version 11.</string>
+	<key>Description</key>
+	<string>Downloads the most recent version of Ableton Live based on the version and edition you specify.
+LIVE_VERS is the major version of Live (9 or later).
+Possible values for EDITION are: trial, lite, intro, standard, and suite.
+This recipe now supports Ableton's various ARCHITECTURE options.
+Valid options for Live 11 and later are "universal" and "intel"; earlier versions require "64".
+Based off work of Jazzace
+</string>
+	<key>Identifier</key>
+	<string>om.github.MinervaFT.AbletonLive.download</string>
+	<key>Input</key>
+	<dict>
+		<key>ARCHITECTURE</key>
+		<string>universal</string>
+		<key>EDITION</key>
+		<string>lite</string>
+		<key>LIVE_VERS</key>
+		<string>12</string>
+		<key>NAME</key>
+		<string>Ableton Live Suite 12</string>
+	</dict>
+	<key>MinimumVersion</key>
+	<string>2.3</string>
+	<key>Process</key>
+	<array>
+		<dict>
+			<key>Processor</key>
+			<string>URLTextSearcher</string>
+			<key>Arguments</key>
+			<dict>
+				<key>re_pattern</key>
+				<string>h2[^1-9]*(%LIVE_VERS%(\.\d+)+)</string>
+				<key>result_output_var_name</key>
+				<string>long_version</string>
+				<key>url</key>
+				<string>https://www.ableton.com/en/release-notes/live-%LIVE_VERS%/</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>URLDownloader</string>
+			<key>Arguments</key>
+			<dict>
+				<key>url</key>
+				<string>https://cdn-downloads.ableton.com/channels/%long_version%/ableton_live_%EDITION%_%long_version%_%ARCHITECTURE%.dmg</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>EndOfCheckPhase</string>
+		</dict>
+		<dict>
+			<key>Processor</key>
+			<string>CodeSignatureVerifier</string>
+			<key>Arguments</key>
+			<dict>
+				<key>input_path</key>
+				<string>%pathname%/*.app</string>
+				<key>requirement</key>
+				<string>identifier "com.ableton.live" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = MWR434WD94</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>
