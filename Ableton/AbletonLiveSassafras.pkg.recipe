@@ -13,7 +13,7 @@ An Options.txt file is added (via postinstall script) in /Library/Preferences/Ab
 https://help.ableton.com/hc/en-us/articles/360020530999-Authorizing-Live-for-all-users-on-macOS-with-Sassafras
 </string>
 	<key>Identifier</key>
-	<string>com.github.jazzace.pkg.AbletonLiveSassafras</string>
+	<string>com.github.MinervaFT.AbletonLiveSassafras.pkg</string>
 	<key>Input</key>
 	<dict/>
 	<key>MinimumVersion</key>
