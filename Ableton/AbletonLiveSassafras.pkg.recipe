@@ -17,7 +17,7 @@ https://help.ableton.com/hc/en-us/articles/360020530999-Authorizing-Live-for-all
 	<key>Input</key>
 	<dict/>
 	<key>MinimumVersion</key>
-	<string>1.0.0</string>
+	<string>2.3</string>
 	<key>ParentRecipe</key>
 	<string>com.github.MinervaFT.AbletonLive.download</string>
 	<key>Process</key>
