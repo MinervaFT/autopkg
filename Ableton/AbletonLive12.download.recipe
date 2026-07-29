@@ -23,7 +23,7 @@ Based off work of Jazzace
 		<key>LIVE_VERS</key>
 		<string>12</string>
 		<key>NAME</key>
-		<string>Ableton Live Suite 12</string>
+		<string>Ableton Live 12 suite</string>
 	</dict>
 	<key>MinimumVersion</key>
 	<string>2.3</string>
