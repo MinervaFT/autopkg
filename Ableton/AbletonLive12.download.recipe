@@ -13,7 +13,7 @@ Valid options for Live 11 and later are "universal" and "intel"; earlier version
 Based off work of Jazzace
 </string>
 	<key>Identifier</key>
-	<string>om.github.MinervaFT.AbletonLive12.download</string>
+	<string>com.github.MinervaFT.AbletonLive12.download</string>
 	<key>Input</key>
 	<dict>
 		<key>ARCHITECTURE</key>
