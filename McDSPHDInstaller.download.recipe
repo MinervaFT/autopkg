@@ -1,0 +1,20 @@
+Description: Downloads the latest McDSP HD full installer for macOS.
+Identifier: com.github.MinervaFT.download.McDSPHDInstaller
+MinimumVersion: "2.3"
+
+Input:
+  NAME: McDSP HD Installer
+  DOWNLOAD_PAGE: https://mcdsp.com/downloads/plugin-downloads/
+
+Process:
+  - Processor: URLTextSearcher
+    Arguments:
+      url: "%DOWNLOAD_PAGE%"
+      re_pattern: '(https://downloads\.mcdsp\.com/[^\"]*/HD/Mac/McDSP_HD_Install_[^\"]*\.zip)'
+
+  - Processor: URLDownloader
+    Arguments:
+      url: "%match%"
+      filename: "%NAME%.zip"
+
+  - Processor: EndOfCheckPhase

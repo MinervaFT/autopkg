@@ -1,0 +1,20 @@
+Description: Downloads the latest McDSP Native (NV) full installer for macOS.
+Identifier: com.github.MinervaFT.download.McDSPNVInstaller
+MinimumVersion: "2.3"
+
+Input:
+  NAME: McDSP NV Installer
+  DOWNLOAD_PAGE: https://mcdsp.com/downloads/plugin-downloads/
+
+Process:
+  - Processor: URLTextSearcher
+    Arguments:
+      url: "%DOWNLOAD_PAGE%"
+      re_pattern: '(https://downloads\.mcdsp\.com/[^\"]*/NV/Mac/McDSP_NV_Install_[^\"]*\.zip)'
+
+  - Processor: URLDownloader
+    Arguments:
+      url: "%match%"
+      filename: "%NAME%.zip"
+
+  - Processor: EndOfCheckPhase

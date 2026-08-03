@@ -1,0 +1,65 @@
+Description: Downloads the latest McDSP Native (NV) full installer for macOS, extracts version information from the nested component payload, and stages the installer package for Jamf upload.
+Identifier: com.github.MinervaFT.pkg.McDSPNVInstaller
+ParentRecipe: com.github.MinervaFT.download.McDSPNVInstaller
+MinimumVersion: "2.3"
+
+Input:
+  NAME: McDSP NV Installer
+
+Process:
+  - Processor: Unarchiver
+    Arguments:
+      archive_path: "%pathname%"
+      destination_path: "%RECIPE_CACHE_DIR%/package"
+
+  # Locate the top-level installer package from the downloaded zip.
+  # This is the package that will be uploaded to Jamf.
+  - Processor: FileFinder
+    Arguments:
+      pattern: "%RECIPE_CACHE_DIR%/package/*.pkg"
+      result_output_var_name: installer_pkg
+
+  # Unpack the top-level flat package so the nested package payload can be inspected.
+  - Processor: FlatPkgUnpacker
+    Arguments:
+      flat_pkg_path: "%installer_pkg%"
+      destination_path: "%RECIPE_CACHE_DIR%/unpack"
+
+  # Locate the nested package generated inside the flat package expansion.
+  - Processor: FileFinder
+    Arguments:
+      pattern: "%RECIPE_CACHE_DIR%/unpack/*.pkg"
+      result_output_var_name: nested_pkg
+
+  - Processor: PkgPayloadUnpacker
+    Arguments:
+      pkg_payload_path: "%nested_pkg%/payload"
+      destination_path: "%RECIPE_CACHE_DIR%/payload"
+
+  # The McDSP full installer contains nested zip payloads that include the plugin bundles.
+  - Processor: FileFinder
+    Arguments:
+      pattern: "%RECIPE_CACHE_DIR%/payload/*.zip"
+      result_output_var_name: payload_zip
+
+  - Processor: Unarchiver
+    Arguments:
+      archive_path: "%payload_zip%"
+      destination_path: "%RECIPE_CACHE_DIR%/unarchive"
+
+  # Use one unpacked component to determine the current product version.
+  - Processor: FileFinder
+    Arguments:
+      pattern: "%RECIPE_CACHE_DIR%/unarchive/*/*.component"
+      result_output_var_name: component_path
+
+  - Processor: Versioner
+    Arguments:
+      input_plist_path: "%component_path%/Contents/Info.plist"
+      plist_version_key: CFBundleShortVersionString
+
+  # Copy the original full installer package to a versioned package name for JamfUploader.
+  - Processor: PkgCopier
+    Arguments:
+      source_pkg: "%installer_pkg%"
+      pkg_path: "%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg"
