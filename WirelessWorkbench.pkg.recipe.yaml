@@ -1,0 +1,35 @@
+Description: |
+  Version-stamps the vendor-supplied Shure Wireless Workbench installer package.
+
+  The vendor download is already a signed flat package, so it is copied
+  rather than rebuilt. The version is read from the app inside the payload
+  of the package's 'temp.pkg' component.
+Identifier: au.edu.tafe-jamf.pkg.WirelessWorkbench
+ParentRecipe: com.github.dataJAR-recipes.download.Wireless Workbench
+MinimumVersion: "2.3"
+
+Input:
+  NAME: WirelessWorkbench
+
+Process:
+  - Processor: FlatPkgUnpacker
+    Arguments:
+      flat_pkg_path: "%pathname%"
+      destination_path: "%RECIPE_CACHE_DIR%/unpack"
+      purge_destination: true
+
+  - Processor: PkgPayloadUnpacker
+    Arguments:
+      pkg_payload_path: "%RECIPE_CACHE_DIR%/unpack/temp.pkg/Payload"
+      destination_path: "%RECIPE_CACHE_DIR%/payload"
+      purge_destination: true
+
+  - Processor: Versioner
+    Arguments:
+      input_plist_path: "%RECIPE_CACHE_DIR%/payload/Applications/Wireless Workbench.app/Contents/Info.plist"
+      plist_version_key: CFBundleShortVersionString
+
+  - Processor: PkgCopier
+    Arguments:
+      source_pkg: "%pathname%"
+      pkg_path: "%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg"

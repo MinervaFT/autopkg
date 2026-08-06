@@ -1,0 +1,26 @@
+Description: |
+  Downloads the latest McDSP Native (NV) full installer for macOS.
+
+  Replaces com.github.MinervaFT.download.McDSPNVInstaller. The upstream repo
+  stores its recipes as YAML in files named *.recipe rather than *.recipe.yaml,
+  so AutoPkg tries to parse them as XML plists and rejects them outright.
+Identifier: au.edu.tafe-jamf.download.McDSPNVInstaller
+MinimumVersion: "2.3"
+
+Input:
+  NAME: McDSPNVInstaller
+  DOWNLOAD_PAGE: https://mcdsp.com/downloads/plugin-downloads/
+
+Process:
+  - Processor: URLTextSearcher
+    Arguments:
+      url: "%DOWNLOAD_PAGE%"
+      re_pattern: '(https://downloads\.mcdsp\.com/[^"]*/NV/Mac/McDSP_NV_Install_[^"]*\.zip)'
+      result_output_var_name: DOWNLOAD_URL
+
+  - Processor: URLDownloader
+    Arguments:
+      url: "%DOWNLOAD_URL%"
+      filename: "%NAME%.zip"
+
+  - Processor: EndOfCheckPhase

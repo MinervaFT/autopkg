@@ -1,0 +1,19 @@
+Description: |
+  Version-stamps the vendor-supplied Blackmagic Audio Monitor installer package.
+
+  The parent download recipe unarchives a zip containing a disk image, which in
+  turn holds Blackmagic's signed installer package. That package is copied out
+  rather than rebuilt. %version% is supplied by the parent recipe's
+  BlackMagicURLProvider, so no version extraction is needed here.
+Identifier: au.edu.tafe-jamf.pkg.BlackmagicAudioMonitor
+ParentRecipe: com.github.dataJAR-recipes.download.BlackmagicAudioMonitor
+MinimumVersion: "2.3"
+
+Input:
+  NAME: BlackmagicAudioMonitor
+
+Process:
+  - Processor: PkgCopier
+    Arguments:
+      source_pkg: "%RECIPE_CACHE_DIR%/%NAME%/Blackmagic_Audio_Monitor_%version%.dmg/Install Audio Monitor %version%.pkg"
+      pkg_path: "%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg"

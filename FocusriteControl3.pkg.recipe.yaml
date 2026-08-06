@@ -1,0 +1,37 @@
+Description: |
+  Version-stamps the vendor-supplied Focusrite Control 3 installer package.
+
+  The vendor disk image contains a signed installer package which also lays down
+  a LaunchDaemon, so it is copied rather than rebuilt. The version is read from
+  the app inside the package payload, giving the full four-part build version
+  rather than the truncated version in the download URL.
+Identifier: au.edu.tafe-jamf.pkg.FocusriteControl3
+ParentRecipe: au.edu.tafe-jamf.download.FocusriteControl3
+MinimumVersion: "2.3"
+
+Input:
+  NAME: FocusriteControl3
+  INSTALLER_NAME: Focusrite Control.pkg
+
+Process:
+  - Processor: FlatPkgUnpacker
+    Arguments:
+      flat_pkg_path: "%pathname%/%INSTALLER_NAME%"
+      destination_path: "%RECIPE_CACHE_DIR%/unpack"
+      purge_destination: true
+
+  - Processor: PkgPayloadUnpacker
+    Arguments:
+      pkg_payload_path: "%RECIPE_CACHE_DIR%/unpack/%INSTALLER_NAME%/Payload"
+      destination_path: "%RECIPE_CACHE_DIR%/payload"
+      purge_destination: true
+
+  - Processor: Versioner
+    Arguments:
+      input_plist_path: "%RECIPE_CACHE_DIR%/payload/Applications/Focusrite Control.app/Contents/Info.plist"
+      plist_version_key: CFBundleShortVersionString
+
+  - Processor: PkgCopier
+    Arguments:
+      source_pkg: "%pathname%/%INSTALLER_NAME%"
+      pkg_path: "%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg"

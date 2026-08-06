@@ -1,0 +1,37 @@
+Description: |
+  Downloads and packages DaVinci Resolve.
+
+  Wraps com.github.davidbpirie.pkg.BlackmagicDaVinciResolve, supplying the
+  registration details Blackmagic's download gateway requires and raising
+  PRODUCT_MAJOR_VERSION - upstream still pins 18, but DaVinci Resolve 21
+  shipped in June 2026.
+
+  No Process block: this recipe exists only to set Input values, so the parent
+  chain (BlackMagicURLProvider -> URLDownloader -> Unarchiver -> FileFinder ->
+  FlatPkgUnpacker -> PkgPayloadUnpacker -> PlistReader -> PkgCopier) runs as-is.
+
+  ##############################################################
+  # BEFORE FIRST RUN: replace the REG_ placeholders below.      #
+  # These are submitted to Blackmagic Design's registration     #
+  # form. REG_COUNTRY must be a two-letter lowercase code.      #
+  ##############################################################
+
+  APP_PKG_NAME is the manifest package inside the installer and changes between
+  major versions (Manifest.pkg for v17, ManifestList/ManifestLite.pkg for v18).
+  If the run fails at PkgPayloadUnpacker, expand the downloaded pkg and set this
+  to the actual manifest package name for v21.
+Identifier: au.edu.tafe-jamf.pkg.BlackmagicDaVinciResolve
+ParentRecipe: com.github.davidbpirie.pkg.BlackmagicDaVinciResolve
+MinimumVersion: "2.3"
+
+Input:
+  NAME: BlackmagicDaVinciResolve
+  PRODUCT_MAJOR_VERSION: "21"
+  APP_PKG_NAME: ManifestLite.pkg
+  REG_FIRSTNAME: Tafe
+  REG_LASTNAME: SA
+  REG_EMAIL: info@tafesa.edu.au
+  REG_PHONE: 0821134567
+  REG_CITY: Adelaide
+  REG_STREET: TafeRoad
+  REG_COUNTRY: au

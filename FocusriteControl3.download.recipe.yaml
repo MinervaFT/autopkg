@@ -1,0 +1,36 @@
+Description: |
+  Downloads the latest version of Focusrite Control 3.
+
+  Replaces com.github.dataJAR-recipes.download.Focusrite Control 3, whose
+  URLTextSearcher pattern no longer matches: Focusrite renamed the installer
+  from focusrite_control_3_X_Y.dmg to focusrite_control_v3_X_Y.dmg.
+  The upstream recipe hardcodes re_pattern as a processor argument rather than
+  an Input, so it cannot be corrected with a recipe override.
+Identifier: au.edu.tafe-jamf.download.FocusriteControl3
+MinimumVersion: "2.3"
+
+Input:
+  NAME: FocusriteControl3
+  SEARCH_URL: https://downloads.focusrite.com/focusrite/scarlett-3rd-gen/scarlett-2i2-3rd-gen
+
+Process:
+  - Processor: URLTextSearcher
+    Arguments:
+      url: "%SEARCH_URL%"
+      re_pattern: '(https://fael-downloads-prod\.focusrite\.com/customer/prod/downloads/focusrite_control_v3_([0-9]+(_[0-9]+)+)\.dmg)'
+      result_output_var_name: DOWNLOAD_URL
+
+  - Processor: URLDownloader
+    Arguments:
+      url: "%DOWNLOAD_URL%"
+      filename: "%NAME%.dmg"
+
+  - Processor: EndOfCheckPhase
+
+  - Processor: CodeSignatureVerifier
+    Arguments:
+      input_path: "%pathname%/Focusrite Control.pkg"
+      expected_authority_names:
+        - "Developer ID Installer: Focusrite Audio Engineering Ltd. (7VYBQV3T2Q)"
+        - Developer ID Certification Authority
+        - Apple Root CA

@@ -1,0 +1,53 @@
+Description: |
+  Version-stamps the vendor-supplied Sassafras K2 Client installer package.
+
+  The download is a signed multi-component distribution package (KeyAccess,
+  KeyAccessPref, KeyCheckout, KeyVerify) that also installs LaunchAgents and
+  LaunchDaemons, so it is copied rather than rebuilt.
+
+  REVISION must be set explicitly. The parent recipe documents an empty
+  REVISION as meaning "latest", but that path now returns 404 - only
+  revisions70 through revisions76 currently resolve. Bump this when Sassafras
+  publishes a new revision directory.
+
+  The version comes from KeyAccess.app inside the KeyAccess component payload.
+  The other three components carry stale versions in their bundles (7.6,
+  7.6.0.0 and 7.5.0.0 against KeyAccess's 7.6.1.2), so they are not safe
+  version sources.
+Identifier: au.edu.tafe-jamf.pkg.SassafrasK2Client
+ParentRecipe: com.github.autopkg.download.sassafras-k2client
+MinimumVersion: "2.3"
+
+Input:
+  NAME: SassafrasK2Client
+  REVISION: "76"
+  VERSION_COMPONENT: KeyAccess.pkg
+
+Process:
+  - Processor: FlatPkgUnpacker
+    Arguments:
+      flat_pkg_path: "%pathname%"
+      destination_path: "%RECIPE_CACHE_DIR%/unpack"
+      purge_destination: true
+
+  - Processor: PkgPayloadUnpacker
+    Arguments:
+      pkg_payload_path: "%RECIPE_CACHE_DIR%/unpack/%VERSION_COMPONENT%/Payload"
+      destination_path: "%RECIPE_CACHE_DIR%/payload"
+      purge_destination: true
+
+  - Processor: Versioner
+    Arguments:
+      input_plist_path: "%RECIPE_CACHE_DIR%/payload/KeyAccess/KeyAccess.app/Contents/Info.plist"
+      plist_version_key: CFBundleShortVersionString
+
+  - Processor: PkgCopier
+    Arguments:
+      source_pkg: "%pathname%"
+      pkg_path: "%RECIPE_CACHE_DIR%/%NAME%-%version%.pkg"
+
+  - Processor: PathDeleter
+    Arguments:
+      path_list:
+        - "%RECIPE_CACHE_DIR%/unpack"
+        - "%RECIPE_CACHE_DIR%/payload"
